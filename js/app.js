@@ -47,18 +47,22 @@ $(function() {
     while (openCards.length !== 0) {
       openCards.pop();
     }
+    $(card1).removeClass('open show');
+    $(card2).removeClass('open show');
     $(card1).addClass('match');
     $(card2).addClass('match');
   }
 
   function cardsDontMatch(card1, card2) {
     console.log('not equal');
+    $(card1).addClass('dont-match');
+    $(card2).addClass('dont-match');
     while (openCards.length !== 0) {
       openCards.pop();
     }
     setTimeout(function() {
-      $(card1).removeClass('open show');
-      $(card2).removeClass('open show');
+      $(card1).removeClass('open show dont-match');
+      $(card2).removeClass('open show dont-match');
     }, 1000);
   }
 
