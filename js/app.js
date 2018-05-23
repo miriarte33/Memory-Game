@@ -1,8 +1,9 @@
 $(function() {
-  var openCards = [] //global array
-  var counter = 0; //global move counter
+  let openCards = [] //global array
+  let counter = 0; //global move counter
+  let cardsMatched = 0; //global counter for matches. If 8, game over
 
-  //Create a list that holds all of your cards
+  //Create a list that holds all of cards
   const diamonds = document.getElementsByClassName('fa-diamond');
   const paperPlanes = document.getElementsByClassName('fa-paper-plane-o');
   const anchors = document.getElementsByClassName('fa-anchor');
@@ -34,25 +35,34 @@ $(function() {
       return array;
   }
 
+  //flip the card
   function displayCard(card) {
     $(card).addClass('open show');
   }
 
+  //unflip the cards when the second one doesn't match the first
   function hideCard(card) {
     $(card).removeClass('open show');
   }
 
+  //Sets the class to 'match' if the cards are equal
   function cardsMatch(card1, card2) {
-    console.log('equal');
-    while (openCards.length !== 0) {
-      openCards.pop();
+    if (card1 !== card2) { //if theyre not the same exact card, then they match
+      console.log('equal');
+      while (openCards.length !== 0) {
+        openCards.pop();
+      }
+      $(card1).removeClass('open show');
+      $(card2).removeClass('open show');
+      $(card1).addClass('match');
+      $(card2).addClass('match');
+      cardsMatched++;
+    } else { //the user clicked the same exact card twice, so they cant match (that would be cheating)
+      cardsDontMatch(card1, card2);
     }
-    $(card1).removeClass('open show');
-    $(card2).removeClass('open show');
-    $(card1).addClass('match');
-    $(card2).addClass('match');
   }
 
+  //Sets the class to 'dont-match' if the cards are not equal, which does an animation on both cards
   function cardsDontMatch(card1, card2) {
     console.log('not equal');
     $(card1).addClass('dont-match');
@@ -63,9 +73,10 @@ $(function() {
     setTimeout(function() {
       $(card1).removeClass('open show dont-match');
       $(card2).removeClass('open show dont-match');
-    }, 1000);
+    }, 1000); //1 second delay so that the user can see the second card before it disappears
   }
 
+  //add a card to the openCards list and check if those cards are equal
   function addCard(card) {
     openCards.push(card);
     if (openCards.length === 2) {
@@ -75,62 +86,68 @@ $(function() {
         cardsDontMatch(openCards[0], openCards[1]);
       }
       incrementMove();
+      gameOver();
     }
-
   }
 
+  //Checks whether or not the game is over
+  function gameOver() {
+    if (cardsMatched === 8) {
+      console.log('YOU WON!!!!');
+      let winner = document.querySelector('.deck');
+      let starCount = document.querySelector('.stars');
+      winner.innerHTML = `<li class='winner'>YOU WON! Moves: ${counter} ` + starCount.innerHTML + '</li>';
+    }
+  }
+
+  //Tracks how many moves the user has done
   function incrementMove() {
     counter++;
     let starCount = document.querySelector('.stars');
-
-    if (counter >= 24 && counter < 40) {
-      starCount.innerHTML = '<li><i class="fa fa-star"></i></li> <li><i class="fa fa-star"></i></li>';
+    if (counter < 24) {
+      starCount.innerHTML = '<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>'
+    }
+    else if (counter >= 24 && counter < 40) {
+      starCount.innerHTML = '<i class="fa fa-star"></i><i class="fa fa-star"></i>';
     } else if (counter >= 40 && counter < 56) {
-      starCount.innerHTML = '<li><i class="fa fa-star"></i></li>';
+      starCount.innerHTML = '<i class="fa fa-star"></i>';
     } else if (counter >= 56) {
       starCount.innerHTML = '';
     }
     let moveCounter = document.querySelector('.moves');
     moveCounter.textContent = counter;
   }
-  /*
-  * Display the cards on the page
-  *   - shuffle the list of cards using the provided "shuffle" method below
-  *   - loop through each card and create its HTML
-  *   - add each card's HTML to the page
-  */
 
-  shuffle(cards);
-  let deck = document.getElementsByClassName('card');
-  let card = document.createElement('li');
+  function play() {
+    shuffle(cards);
+    let deck = document.getElementsByClassName('card');
+    let card = document.createElement('li');//create a new element for the shuffled cards
 
-  for (let i=0; i<deck.length; i++) {
-    $(cards[i]).removeClass('show open match');
-    $(card).addClass('card');
-    card.appendChild(cards[i].firstElementChild);
-    //deck[i].appendChild(card.firstElementChild);
+    for (let i=0; i<deck.length; i++) {
+      $(cards[i]).removeClass('show open match');//Make sure every card starts off facing backwards
+      $(card).addClass('card');
+      card.appendChild(cards[i].firstElementChild);//add the shuffled cards at children of the new element
 
-    let x = deck[i];
+      let x = deck[i];
+      x.addEventListener('click', function(evt) { //event listener for when a card is clicked
+        evt.preventDefault();
+        displayCard(x);
+        addCard(x);
+      });
 
-    x.addEventListener('click', function(evt) {
-      evt.preventDefault();
-
-      displayCard(x);
-      addCard(x);
-    });
-
-    deck[i].appendChild(card.firstElementChild);
+      deck[i].appendChild(card.firstElementChild);//add the shuffled cards
+    }
   }
 
+  //reloads the page if the restart element is clicked
+  function replay() {
+    let replayButton = document.querySelector('.restart');
+    replayButton.addEventListener('click', function(evt) {
+      evt.preventDefault();
+      location.reload();
+    });
+  }
 
-  /*
-   * set up the event listener for a card. If a card is clicked:
-   *  - display the card's symbol (put this functionality in another function that you call from this one)
-   *  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
-   *  - if the list already has another card, check to see if the two cards match
-   *    + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
-   *    + if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
-   *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
-   *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
-   */
+  replay();
+  play();
 });
