@@ -58,6 +58,7 @@ $(function() {
       $(card1).addClass('match');
       $(card2).addClass('match');
       cardsMatched++;
+      incrementMove();
     } else { //the user clicked the same exact card twice, so they cant match (that would be cheating)
       cardsDontMatch(card1, card2);
     }
@@ -65,6 +66,9 @@ $(function() {
 
   //Sets the class to 'dont-match' if the cards are not equal, which does an animation on both cards
   function cardsDontMatch(card1, card2) {
+    if (card1 !== card2) {
+      incrementMove();
+    }
     console.log('not equal');
     $(card1).addClass('dont-match');
     $(card2).addClass('dont-match');
@@ -86,7 +90,6 @@ $(function() {
       } else {
         cardsDontMatch(openCards[0], openCards[1]);
       }
-      incrementMove();
       gameOver();
     }
   }
@@ -98,8 +101,17 @@ $(function() {
       let winner = document.querySelector('.deck');
       let starCount = document.querySelector('.stars');
       let timeElapsed = document.querySelector('.time');
+      let playAgain = document.createElement('li');
+      playAgain.textContent = 'Click to play again';
+      playAgain.className = 'winner';
+      playAgain.style.cursor = 'pointer';
+      playAgain.addEventListener('click', function(evt) {
+        evt.preventDefault();
+        location.reload();
+      });
       winner.innerHTML = `<li class='winner'>YOU WON! <br> Moves: ${counter} <br> Time: ${timer.getTimeValues()} ` + '<br>' + starCount.innerHTML + '</li>';
       timer.stop();
+      winner.appendChild(playAgain);
     }
   }
 

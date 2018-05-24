@@ -33,6 +33,10 @@ h1 {
     font-weight: 300;
 }
 
+li {
+  list-style: none;
+}
+
 /*
  * Styles for the deck of cards
  */
@@ -131,11 +135,11 @@ h1 {
 }
 
 .winner {
+  list-style: none;
   margin: auto;
   width: 50%;
-  list-style: none;
   font-size: 200%;
   text-align: center;
-  border: 1px solid black;
-  background-color: rgba(0,0,0,0.35);
+  border: 0px solid black;
+  background-color: rgba(0, 0, 0, 0.35);
 }
