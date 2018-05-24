@@ -2,6 +2,7 @@ $(function() {
   let openCards = [] //global array
   let counter = 0; //global move counter
   let cardsMatched = 0; //global counter for matches. If 8, game over
+  let timer = new Timer();
 
   //Create a list that holds all of cards
   const diamonds = document.getElementsByClassName('fa-diamond');
@@ -96,7 +97,9 @@ $(function() {
       console.log('YOU WON!!!!');
       let winner = document.querySelector('.deck');
       let starCount = document.querySelector('.stars');
-      winner.innerHTML = `<li class='winner'>YOU WON! Moves: ${counter} ` + starCount.innerHTML + '</li>';
+      let timeElapsed = document.querySelector('.time');
+      winner.innerHTML = `<li class='winner'>YOU WON! <br> Moves: ${counter} <br> Time: ${timer.getTimeValues()} ` + '<br>' + starCount.innerHTML + '</li>';
+      timer.stop();
     }
   }
 
@@ -106,23 +109,21 @@ $(function() {
     let starCount = document.querySelector('.stars');
     if (counter < 24) {
       starCount.innerHTML = '<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>'
-    }
-    else if (counter >= 24 && counter < 40) {
+    } else if (counter >= 24 && counter < 40) {
       starCount.innerHTML = '<i class="fa fa-star"></i><i class="fa fa-star"></i>';
-    } else if (counter >= 40 && counter < 56) {
+    } else {
       starCount.innerHTML = '<i class="fa fa-star"></i>';
-    } else if (counter >= 56) {
-      starCount.innerHTML = '';
     }
     let moveCounter = document.querySelector('.moves');
-    moveCounter.textContent = counter;
+    moveCounter.textContent = `Moves: ${counter}`;
   }
 
   function play() {
     shuffle(cards);
     let deck = document.getElementsByClassName('card');
     let card = document.createElement('li');//create a new element for the shuffled cards
-
+    let timeElapsed = document.querySelector('.time');
+    timer.start();
     for (let i=0; i<deck.length; i++) {
       $(cards[i]).removeClass('show open match');//Make sure every card starts off facing backwards
       $(card).addClass('card');
@@ -131,6 +132,9 @@ $(function() {
       let x = deck[i];
       x.addEventListener('click', function(evt) { //event listener for when a card is clicked
         evt.preventDefault();
+        timer.addEventListener('secondsUpdated', function (e) {
+          timeElapsed.textContent = timer.getTimeValues().toString();
+        });
         displayCard(x);
         addCard(x);
       });
