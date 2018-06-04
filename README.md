@@ -3,7 +3,7 @@ JavaScript game made for Udacity Google Front-end web development nanodegree pro
 Click a card to open it. Click another to open it and see if the two cards match. Match all the cards to win in as little moves as possible to test your memory!
 
 ## Instructions ##
-To play, clone/download this repo and open index.html in your browser. 
+To play, visit https://miriarte33.github.io/Memory-Game/
 
 ## Resources ##
 Uses easytimer library for timer functionality as well as jQuery for easy access and manipulation of DOM elements. 
